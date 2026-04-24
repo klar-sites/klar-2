@@ -1,14 +1,1449 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>klar-2</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script>
-  </head>
-  <body>
-    <h1>klar-2</h1>
-    <p>Edit this page with Klar.</p>
-  </body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Meridian Society — A Curator's Collective for the World's Rarest Spirits</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,700;0,6..96,900;1,6..96,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --obsidian: #0a0a0c;
+  --midnight: #0d1b2a;
+  --navy-deep: #121d2e;
+  --emerald: #1a3a2a;
+  --emerald-light: #2d5a40;
+  --gold: #c9a84c;
+  --gold-light: #dfc06b;
+  --gold-pale: #e8d49a;
+  --champagne: #f0e6c8;
+  --amber: #b8860b;
+  --amber-warm: #d4a24e;
+  --cream: #f5f0e1;
+  --ivory: #faf7ef;
+  --brass: #b5964d;
+  --charcoal: #1a1a1e;
+  --slate: #2a2a30;
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  background: var(--obsidian);
+  color: var(--champagne);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== NOISE TEXTURE OVERLAY ===== */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 10000;
+  opacity: 0.4;
+}
+
+/* ===== CUSTOM SCROLLBAR ===== */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--obsidian); }
+::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 0; }
+
+/* ===== LOADING OVERLAY ===== */
+.meridian-loading-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--obsidian);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+.meridian-loading-overlay.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+.meridian-loading-emblem {
+  width: 80px;
+  height: 80px;
+  position: relative;
+}
+.meridian-loading-emblem::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 60px; height: 60px;
+  transform: translate(-50%, -50%);
+  border: 2px solid var(--gold);
+  animation: meridianSpin 2s linear infinite;
+}
+.meridian-loading-emblem::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 40px; height: 40px;
+  transform: translate(-50%, -50%) rotate(45deg);
+  border: 1px solid var(--gold-light);
+  animation: meridianSpin 3s linear infinite reverse;
+}
+@keyframes meridianSpin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* ===== NAVIGATION ===== */
+.meridian-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 9999;
+  padding: 1.5rem 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.5s ease, padding 0.4s ease;
+}
+.meridian-nav.scrolled {
+  background: rgba(10, 10, 12, 0.95);
+  backdrop-filter: blur(12px);
+  padding: 1rem 3rem;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+}
+.meridian-nav-logo {
+  font-family: 'Bodoni Moda', serif;
+  font-weight: 900;
+  font-size: 1.2rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-decoration: none;
+}
+.meridian-nav-links {
+  display: flex;
+  gap: 2.5rem;
+  list-style: none;
+}
+.meridian-nav-links a {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--champagne);
+  text-decoration: none;
+  position: relative;
+  transition: color 0.3s ease;
+}
+.meridian-nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; left: 50%;
+  width: 0; height: 1px;
+  background: var(--gold);
+  transition: width 0.4s ease, left 0.4s ease;
+}
+.meridian-nav-links a:hover { color: var(--gold); }
+.meridian-nav-links a:hover::after { width: 100%; left: 0; }
+
+/* ===== HERO ===== */
+.meridian-hero {
+  height: 100vh;
+  min-height: 700px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 80%, rgba(26, 58, 42, 0.3) 0%, var(--obsidian) 70%);
+}
+
+/* Sunburst pattern */
+.meridian-hero-sunburst {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 200vmax; height: 200vmax;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  animation: sunburstReveal 2s ease-out 1.2s forwards;
+}
+@keyframes sunburstReveal {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+.meridian-sunburst-ray {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 2px;
+  height: 50%;
+  transform-origin: bottom center;
+  background: linear-gradient(to top, rgba(201, 168, 76, 0.08), transparent);
+}
+
+/* Geometric frame */
+.meridian-hero-frame {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(80vw, 700px);
+  height: min(70vh, 550px);
+  border: 1px solid rgba(201, 168, 76, 0.25);
+  opacity: 0;
+  animation: frameReveal 1.5s ease-out 0.8s forwards;
+}
+.meridian-hero-frame::before {
+  content: '';
+  position: absolute;
+  top: -12px; left: -12px; right: -12px; bottom: -12px;
+  border: 1px solid rgba(201, 168, 76, 0.1);
+}
+.meridian-hero-frame::after {
+  content: '';
+  position: absolute;
+  top: 12px; left: 12px; right: 12px; bottom: 12px;
+  border: 1px solid rgba(201, 168, 76, 0.15);
+}
+@keyframes frameReveal {
+  from { opacity: 0; width: 200px; height: 200px; }
+  to { opacity: 1; width: min(80vw, 700px); height: min(70vh, 550px); }
+}
+
+/* Corner ornaments */
+.meridian-corner {
+  position: absolute;
+  width: 40px; height: 40px;
+  opacity: 0;
+  animation: cornerReveal 0.8s ease-out 2s forwards;
+}
+.meridian-corner::before, .meridian-corner::after {
+  content: '';
+  position: absolute;
+  background: var(--gold);
+}
+.meridian-corner--tl { top: -1px; left: -1px; }
+.meridian-corner--tl::before { top: 0; left: 0; width: 40px; height: 1px; }
+.meridian-corner--tl::after { top: 0; left: 0; width: 1px; height: 40px; }
+.meridian-corner--tr { top: -1px; right: -1px; }
+.meridian-corner--tr::before { top: 0; right: 0; width: 40px; height: 1px; }
+.meridian-corner--tr::after { top: 0; right: 0; width: 1px; height: 40px; }
+.meridian-corner--bl { bottom: -1px; left: -1px; }
+.meridian-corner--bl::before { bottom: 0; left: 0; width: 40px; height: 1px; }
+.meridian-corner--bl::after { bottom: 0; left: 0; width: 1px; height: 40px; }
+.meridian-corner--br { bottom: -1px; right: -1px; }
+.meridian-corner--br::before { bottom: 0; right: 0; width: 40px; height: 1px; }
+.meridian-corner--br::after { bottom: 0; right: 0; width: 1px; height: 40px; }
+@keyframes cornerReveal {
+  from { opacity: 0; width: 0; height: 0; }
+  to { opacity: 1; width: 40px; height: 40px; }
+}
+
+/* Hero content */
+.meridian-hero-content {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  padding: 2rem;
+}
+.meridian-hero-prelude {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: textFadeUp 1s ease-out 1.8s forwards;
+}
+.meridian-hero-title {
+  font-family: 'Bodoni Moda', serif;
+  font-weight: 900;
+  font-size: clamp(3rem, 8vw, 7rem);
+  line-height: 0.95;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--champagne);
+  margin-bottom: 0.5rem;
+  opacity: 0;
+  animation: titleReveal 1.2s ease-out 1.4s forwards;
+}
+.meridian-hero-title span {
+  display: block;
+  color: var(--gold);
+  font-size: 0.35em;
+  letter-spacing: 0.6em;
+  margin-top: 0.5rem;
+  font-weight: 400;
+  font-family: 'Cormorant Garamond', serif;
+}
+@keyframes titleReveal {
+  from { opacity: 0; letter-spacing: 0.4em; }
+  to { opacity: 1; letter-spacing: 0.08em; }
+}
+@keyframes textFadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.meridian-hero-divider {
+  width: 100px;
+  height: 1px;
+  background: var(--gold);
+  margin: 1.5rem auto;
+  position: relative;
+  opacity: 0;
+  animation: dividerExpand 1s ease-out 2.2s forwards;
+}
+.meridian-hero-divider::before {
+  content: '◆';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 8px;
+  color: var(--gold);
+  background: var(--obsidian);
+  padding: 0 8px;
+}
+@keyframes dividerExpand {
+  from { opacity: 0; width: 0; }
+  to { opacity: 1; width: 100px; }
+}
+
+.meridian-hero-subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--gold-pale);
+  max-width: 500px;
+  margin: 0 auto 2rem;
+  line-height: 1.6;
+  opacity: 0;
+  animation: textFadeUp 1s ease-out 2.5s forwards;
+}
+
+.meridian-hero-cta {
+  display: inline-block;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-decoration: none;
+  border: 1px solid var(--gold);
+  padding: 1rem 2.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: color 0.4s ease, background 0.4s ease;
+  opacity: 0;
+  animation: textFadeUp 1s ease-out 2.8s forwards;
+}
+.meridian-hero-cta::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: var(--gold);
+  transition: left 0.5s ease;
+  z-index: -1;
+}
+.meridian-hero-cta:hover::before { left: 0; }
+.meridian-hero-cta:hover { color: var(--obsidian); }
+
+/* Scroll indicator */
+.meridian-scroll-indicator {
+  position: absolute;
+  bottom: 3rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0;
+  animation: textFadeUp 1s ease-out 3.2s forwards;
+}
+.meridian-scroll-indicator span {
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.meridian-scroll-line {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, var(--gold), transparent);
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+@keyframes scrollPulse {
+  0%, 100% { opacity: 1; height: 40px; }
+  50% { opacity: 0.3; height: 25px; }
+}
+
+/* ===== CHEVRON DIVIDER ===== */
+.meridian-chevron-divider {
+  width: 100%;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background: var(--obsidian);
+}
+.meridian-chevron-row {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.meridian-chevron {
+  width: 20px;
+  height: 20px;
+  border-right: 1px solid var(--gold);
+  border-bottom: 1px solid var(--gold);
+  transform: rotate(-45deg);
+  opacity: 0.3;
+}
+.meridian-chevron:nth-child(2) { opacity: 0.5; }
+.meridian-chevron:nth-child(3) { opacity: 0.7; width: 24px; height: 24px; }
+.meridian-chevron:nth-child(4) { opacity: 0.5; }
+.meridian-chevron:nth-child(5) { opacity: 0.3; }
+
+/* ===== PHILOSOPHY SECTION ===== */
+.meridian-philosophy {
+  padding: 8rem 2rem;
+  background: linear-gradient(180deg, var(--obsidian) 0%, var(--midnight) 50%, var(--obsidian) 100%);
+  position: relative;
+  overflow: hidden;
+}
+.meridian-philosophy::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(to bottom, transparent, rgba(201, 168, 76, 0.15), transparent);
+}
+.meridian-philosophy-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+}
+.meridian-section-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.6em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+}
+.meridian-section-label::before,
+.meridian-section-label::after {
+  content: '';
+  width: 60px;
+  height: 1px;
+  background: var(--gold);
+  opacity: 0.4;
+}
+.meridian-philosophy-quote {
+  font-family: 'Bodoni Moda', serif;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--champagne);
+  margin-bottom: 2rem;
+  font-style: italic;
+}
+.meridian-philosophy-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem;
+  line-height: 1.9;
+  color: var(--gold-pale);
+  font-weight: 300;
+  max-width: 650px;
+  margin: 0 auto;
+  opacity: 0.85;
+}
+
+/* ===== ART DECO PATTERN BAND ===== */
+.meridian-pattern-band {
+  width: 100%;
+  height: 60px;
+  background: var(--obsidian);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.meridian-pattern-band svg {
+  height: 40px;
+  width: 100%;
+  max-width: 1200px;
+}
+
+/* ===== PILLARS SECTION ===== */
+.meridian-pillars {
+  padding: 8rem 2rem;
+  background: var(--charcoal);
+  position: relative;
+}
+.meridian-pillars::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(26, 58, 42, 0.2) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 50%, rgba(13, 27, 42, 0.3) 0%, transparent 50%);
+}
+.meridian-pillars-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+}
+.meridian-pillars-header {
+  text-align: center;
+  margin-bottom: 5rem;
+}
+.meridian-pillars-title {
+  font-family: 'Bodoni Moda', serif;
+  font-weight: 900;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--champagne);
+}
+.meridian-pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+.meridian-pillar-card {
+  background: rgba(10, 10, 12, 0.6);
+  border: 1px solid rgba(201, 168, 76, 0.12);
+  padding: 3rem 2.5rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.5s ease, transform 0.5s ease;
+}
+.meridian-pillar-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.meridian-pillar-card:hover {
+  border-color: rgba(201, 168, 76, 0.35);
+  transform: translateY(-4px);
+}
+.meridian-pillar-card:hover::before { opacity: 1; }
+.meridian-pillar-icon {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 2rem;
+  position: relative;
+}
+.meridian-pillar-icon svg {
+  width: 100%;
+  height: 100%;
+}
+.meridian-pillar-number {
+  font-family: 'Bodoni Moda', serif;
+  font-size: 3rem;
+  font-weight: 900;
+  color: var(--gold);
+  opacity: 0.15;
+  position: absolute;
+  top: -1rem;
+  right: 1.5rem;
+}
+.meridian-pillar-title {
+  font-family: 'Bodoni Moda', serif;
+  font-weight: 700;
+  font-size: 1.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  margin-bottom: 1rem;
+}
+.meridian-pillar-desc {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--champagne);
+  font-weight: 300;
+  opacity: 0.8;
+}
+
+/* ===== COLLECTION SHOWCASE ===== */
+.meridian-collection {
+  padding: 8rem 2rem;
+  background: var(--obsidian);
+  position: relative;
+  overflow: hidden;
+}
+.meridian-collection-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+}
+.meridian-collection-header {
+  text-align: center;
+  margin-bottom: 5rem;
+}
+.meridian-collection-title {
+  font-family: 'Bodoni Moda', serif;
+  font-weight: 900;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--champagne);
+}
+.meridian-collection-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+.meridian-collection-item {
+  position: relative;
+  aspect-ratio: 3/4;
+  overflow: hidden;
+  border: 1px solid rgba(201, 168, 76, 0.12);
+  cursor: pointer;
+  group: true;
+}
+.meridian-collection-item-bg {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  transition: transform 0.8s ease;
+}
+.meridian-collection-item:nth-child(1) .meridian-collection-item-bg {
+  background: linear-gradient(135deg, #1a0e07 0%, #3d1f0a 40%, #1a0e07 100%);
+}
+.meridian-collection-item:nth-child(2) .meridian-collection-item-bg {
+  background: linear-gradient(135deg, #0a1a12 0%, #1a3a2a 40%, #0a1a12 100%);
+}
+.meridian-collection-item:nth-child(3) .meridian-collection-item-bg {
+  background: linear-gradient(135deg, #0d1b2a 0%, #1b3a5c 40%, #0d1b2a 100%);
+}
+.meridian-collection-item:hover .meridian-collection-item-bg {
+  transform: scale(1.1);
+}
+.meridian-collection-item-content {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 2.5rem 2rem;
+  background: linear-gradient(to top, rgba(10, 10, 12, 0.95) 0%, transparent 100%);
+  transform: translateY(30px);
+  opacity: 0;
+  transition: transform 0.6s ease, opacity 0.6s ease;
+}
+.meridian-collection-item:hover .meridian-collection-item-content {
+  transform: translateY(0);
+  opacity: 1;
+}
+.meridian-collection-item-year {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.5rem;
+}
+.meridian-collection-item-name {
+  font-family: 'Bodoni Moda', serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--champagne);
+  margin-bottom: 0.5rem;
+}
+.meridian-collection-item-detail {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.95rem;
+  color: var(--gold-pale);
+  font-style: italic;
+}
+/* Static overlay with label for non-hovered state */
+.meridian-collection-item-label {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  transition: opacity 0.5s ease;
+}
+.meridian-collection-item:hover .meridian-collection-item-label {
+  opacity: 0;
+}
+.meridian-collection-item-label-text {
+  font-family: 'Bodoni Moda', serif;
+  font-weight: 700;
+  font-size: 1.3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+}
+.meridian-collection-item-label-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--champagne);
+  opacity: 0.6;
+  margin-top: 0.3rem;
+}
+/* Decorative diamond in center */
+.meridian-collection-item-diamond {
+  width: 12px; height: 12px;
+  border: 1px solid var(--gold);
+  transform: rotate(45deg);
+  margin: 1rem auto 1rem;
+  opacity: 0.5;
+}
+
+/* ===== TESTIMONIALS ===== */
+.meridian-testimonials {
+  padding: 8rem 2rem;
+  background: linear-gradient(180deg, var(--obsidian) 0%, var(--navy-deep) 50%, var(--obsidian) 100%);
+  position: relative;
+}
+.meridian-testimonials-inner {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.meridian-testimonials-header {
+  text-align: center;
+  margin-bottom: 5rem;
+}
+.meridian-testimonials-title {
+  font-family: 'Bodoni Moda', serif;
+  font-weight: 900;
+  font-size: clamp(2rem, 5vw, 3rem);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--champagne);
+}
+.meridian-testimonial-item {
+  text-align: center;
+  margin-bottom: 5rem;
+  padding: 0 2rem;
+}
+.meridian-testimonial-item:last-child { margin-bottom: 0; }
+.meridian-testimonial-quote-mark {
+  font-family: 'Bodoni Moda', serif;
+  font-size: 4rem;
+  color: var(--gold);
+  opacity: 0.3;
+  line-height: 1;
+  margin-bottom: 1rem;
+}
+.meridian-testimonial-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+  font-style: italic;
+  font-weight: 300;
+  line-height: 1.7;
+  color: var(--champagne);
+  margin-bottom: 2rem;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.meridian-testimonial-author {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.meridian-testimonial-divider {
+  width: 40px;
+  height: 1px;
+  background: var(--gold);
+  margin: 0 auto;
+  opacity: 0.3;
+}
+
+/* ===== NUMBERS/STATS SECTION ===== */
+.meridian-stats {
+  padding: 5rem 2rem;
+  background: var(--charcoal);
+  border-top: 1px solid rgba(201, 168, 76, 0.1);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.1);
+}
+.meridian-stats-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  text-align: center;
+}
+.meridian-stat-item {
+  padding: 1.5rem;
+}
+.meridian-stat-number {
+  font-family: 'Bodoni Moda', serif;
+  font-weight: 900;
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+.meridian-stat-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--champagne);
+  opacity: 0.6;
+}
+
+/* ===== INVITATION / CTA SECTION ===== */
+.meridian-invitation {
+  padding: 10rem 2rem;
+  background: var(--obsidian);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+.meridian-invitation::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 600px; height: 600px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(201, 168, 76, 0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+.meridian-invitation-inner {
+  max-width: 700px;
+  margin: 0 auto;
+  position: relative;
+}
+.meridian-invitation-frame {
+  border: 1px solid rgba(201, 168, 76, 0.2);
+  padding: 4rem 3rem;
+  position: relative;
+}
+.meridian-invitation-frame .meridian-corner { }
+.meridian-invitation-prelude {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 2rem;
+}
+.meridian-invitation-title {
+  font-family: 'Bodoni Moda', serif;
+  font-weight: 900;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--champagne);
+  margin-bottom: 1.5rem;
+  line-height: 1.1;
+}
+.meridian-invitation-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem;
+  line-height: 1.8;
+  color: var(--gold-pale);
+  font-weight: 300;
+  margin-bottom: 2.5rem;
+  font-style: italic;
+}
+.meridian-invitation-cta {
+  display: inline-block;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--obsidian);
+  background: var(--gold);
+  text-decoration: none;
+  padding: 1.2rem 3rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.5s ease;
+  border: 1px solid var(--gold);
+}
+.meridian-invitation-cta:hover {
+  background: transparent;
+  color: var(--gold);
+}
+.meridian-invitation-note {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.8rem;
+  color: var(--champagne);
+  opacity: 0.4;
+  margin-top: 1.5rem;
+  font-style: italic;
+}
+
+/* ===== FOOTER ===== */
+.meridian-footer {
+  padding: 4rem 2rem 2rem;
+  background: var(--obsidian);
+  border-top: 1px solid rgba(201, 168, 76, 0.1);
+  text-align: center;
+}
+.meridian-footer-logo {
+  font-family: 'Bodoni Moda', serif;
+  font-weight: 900;
+  font-size: 1rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+}
+.meridian-footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+.meridian-footer-links a {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--champagne);
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, color 0.3s ease;
+}
+.meridian-footer-links a:hover { opacity: 1; color: var(--gold); }
+.meridian-footer-line {
+  width: 40px;
+  height: 1px;
+  background: var(--gold);
+  margin: 0 auto 1.5rem;
+  opacity: 0.3;
+}
+.meridian-footer-copy {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.75rem;
+  color: var(--champagne);
+  opacity: 0.3;
+  letter-spacing: 0.1em;
+}
+
+/* ===== SCROLL ANIMATIONS ===== */
+.meridian-reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.meridian-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.meridian-reveal-delay-1 { transition-delay: 0.1s; }
+.meridian-reveal-delay-2 { transition-delay: 0.2s; }
+.meridian-reveal-delay-3 { transition-delay: 0.3s; }
+.meridian-reveal-delay-4 { transition-delay: 0.4s; }
+
+/* Fan reveal for cards */
+.meridian-fan-reveal {
+  opacity: 0;
+  transform: translateY(40px) rotate(2deg);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.meridian-fan-reveal.visible {
+  opacity: 1;
+  transform: translateY(0) rotate(0deg);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .meridian-pillars-grid {
+    grid-template-columns: 1fr;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  .meridian-collection-grid {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  .meridian-stats-inner {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .meridian-nav-links { display: none; }
+  .meridian-hero-frame {
+    width: 90vw;
+    height: 60vh;
+  }
+  @keyframes frameReveal {
+    from { opacity: 0; width: 100px; height: 100px; }
+    to { opacity: 1; width: 90vw; height: 60vh; }
+  }
+}
+@media (max-width: 600px) {
+  .meridian-stats-inner {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  .meridian-invitation-frame {
+    padding: 3rem 1.5rem;
+  }
+  .meridian-philosophy { padding: 5rem 1.5rem; }
+  .meridian-pillars { padding: 5rem 1.5rem; }
+  .meridian-collection { padding: 5rem 1.5rem; }
+  .meridian-testimonials { padding: 5rem 1.5rem; }
+  .meridian-invitation { padding: 6rem 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING OVERLAY -->
+<div class="meridian-loading-overlay" id="meridianLoader">
+  <div class="meridian-loading-emblem"></div>
+</div>
+
+<!-- NAVIGATION -->
+<nav class="meridian-nav" id="meridianNav">
+  <a href="#" class="meridian-nav-logo">Meridian</a>
+  <ul class="meridian-nav-links">
+    <li><a href="#philosophy">Philosophy</a></li>
+    <li><a href="#pillars">The Pillars</a></li>
+    <li><a href="#collection">Collection</a></li>
+    <li><a href="#voices">Voices</a></li>
+    <li><a href="#invitation">Inquire</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="meridian-hero" id="hero">
+  <!-- Sunburst rays -->
+  <div class="meridian-hero-sunburst" id="meridianSunburst"></div>
+
+  <!-- Geometric frame -->
+  <div class="meridian-hero-frame">
+    <div class="meridian-corner meridian-corner--tl"></div>
+    <div class="meridian-corner meridian-corner--tr"></div>
+    <div class="meridian-corner meridian-corner--bl"></div>
+    <div class="meridian-corner meridian-corner--br"></div>
+  </div>
+
+  <!-- Hero content -->
+  <div class="meridian-hero-content">
+    <p class="meridian-hero-prelude">Est. MCMXXVIII · London · New York · Tokyo</p>
+    <h1 class="meridian-hero-title">
+      Meridian
+      <span>A Curator's Collective for the World's Rarest Spirits</span>
+    </h1>
+    <div class="meridian-hero-divider"></div>
+    <p class="meridian-hero-subtitle">
+      Where discernment meets discovery — access to the bottles that were never meant to be found.
+    </p>
+    <a href="#invitation" class="meridian-hero-cta">Request Membership</a>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="meridian-scroll-indicator">
+    <span>Descend</span>
+    <div class="meridian-scroll-line"></div>
+  </div>
+</section>
+
+<!-- CHEVRON DIVIDER -->
+<div class="meridian-chevron-divider">
+  <div class="meridian-chevron-row">
+    <div class="meridian-chevron"></div>
+    <div class="meridian-chevron"></div>
+    <div class="meridian-chevron"></div>
+    <div class="meridian-chevron"></div>
+    <div class="meridian-chevron"></div>
+  </div>
+</div>
+
+<!-- PHILOSOPHY -->
+<section class="meridian-philosophy" id="philosophy">
+  <div class="meridian-philosophy-inner">
+    <div class="meridian-section-label meridian-reveal">Our Philosophy</div>
+    <blockquote class="meridian-philosophy-quote meridian-reveal meridian-reveal-delay-1">
+      "To hold a rare spirit is to hold<br>a vanishing moment in amber —<br>time made tangible, geography made taste."
+    </blockquote>
+    <p class="meridian-philosophy-text meridian-reveal meridian-reveal-delay-2">
+      The Meridian Society was founded on an unshakeable conviction: that the world's most extraordinary spirits deserve custodians, not merely consumers. We do not collect bottles — we preserve legacies. Each acquisition is a chapter in a story that began decades before the glass was sealed, in distant distilleries where craft was religion and patience was currency. Our members understand that true rarity cannot be manufactured, only recognized by those who know where — and how — to look.
+    </p>
+  </div>
+</section>
+
+<!-- ART DECO PATTERN BAND -->
+<div class="meridian-pattern-band">
+  <svg viewBox="0 0 1200 40" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 20 L30 5 L60 20 L30 35 Z" fill="none" stroke="rgba(201,168,76,0.2)" stroke-width="0.5"/>
+    <path d="M60 20 L90 5 L120 20 L90 35 Z" fill="none" stroke="rgba(201,168,76,0.2)" stroke-width="0.5"/>
+    <path d="M120 20 L150 5 L180 20 L150 35 Z" fill="none" stroke="rgba(201,168,76,0.2)" stroke-width="0.5"/>
+    <path d="M180 20 L210 5 L240 20 L210 35 Z" fill="none" stroke="rgba(201,168,76,0.2)" stroke-width="0.5"/>
+    <path d="M240 20 L270 5 L300 20 L270 35 Z" fill="none" stroke="rgba(201,168,76,0.2)" stroke-width="0.5"/>
+    <path d="M300 20 L330 5 L360 20 L330 35 Z" fill="none" stroke="rgba(201,168,76,0.2)" stroke-width="0.5"/>
+    <path d="M360 20 L390 5 L420 20 L390 35 Z" fill="none" stroke="rgba(201,168,76,0.2)" stroke-width="0.5"/>
+    <path d="M420 20 L450 5 L480 20 L450 35 Z" fill="none" stroke="rgba(201,168,76,0.2)" stroke-width="0.5"/>
+    <path d="M480 20 L510 5 L540 20 L510 35 Z" fill="none" stroke="rgba(201,168,76,0.2)" stroke-width="0.5"/>
+    <path d="M540 20 L570 5 L600 20 L570 35 Z" fill="none" stroke="rgba(201,168,76,0.3)" stroke-width="0.5"/>
+    <path d="M600 20 L630 5 L660 20 L630 35 Z" fill="none" stroke="rgba(201,168,76,0.3)" stroke-width="0.5"/>
+    <path d="M660 20 L690 5 L720 20 L690 35 Z" fill="none" stroke="rgba(201,168,76,0.2)" stroke-width="0.5"/>
+    <path d="M720 20 L750 5 L780 20 L750 35 Z" fill="none" stroke="rgba(201,168,76,0.2)" stroke-width="0.5"/>
+    <path d="M780 20 L810 5 L840 20 L810 35 Z" fill="none" stroke="rgba(201,168,76,0.2)" stroke-width="0.5"/>
+    <path d="M840 20 L870 5 L900 20 L870 35 Z" fill="none" stroke="rgba(201,168,76,0.2)" stroke-width="0.5"/>
+    <path d="M900 20 L930 5 L960 20 L930 35 Z" fill="none" stroke="rgba(201,168,76,0.2)" stroke-width="0.5"/>
+    <path d="M960 20 L990 5 L1020 20 L990 35 Z" fill="none" stroke="rgba(201,168,76,0.2)" stroke-width="0.5"/>
+    <path d="M1020 20 L1050 5 L1080 20 L1050 35 Z" fill="none" stroke="rgba(201,168,76,0.2)" stroke-width="0.5"/>
+    <path d="M1080 20 L1110 5 L1140 20 L1110 35 Z" fill="none" stroke="rgba(201,168,76,0.2)" stroke-width="0.5"/>
+    <path d="M1140 20 L1170 5 L1200 20 L1170 35 Z" fill="none" stroke="rgba(201,168,76,0.2)" stroke-width="0.5"/>
+    <line x1="0" y1="20" x2="1200" y2="20" stroke="rgba(201,168,76,0.1)" stroke-width="0.5"/>
+  </svg>
+</div>
+
+<!-- PILLARS -->
+<section class="meridian-pillars" id="pillars">
+  <div class="meridian-pillars-inner">
+    <div class="meridian-pillars-header">
+      <div class="meridian-section-label meridian-reveal">The Three Pillars</div>
+      <h2 class="meridian-pillars-title meridian-reveal meridian-reveal-delay-1">What We Offer</h2>
+    </div>
+    <div class="meridian-pillars-grid">
+      <div class="meridian-pillar-card meridian-fan-reveal">
+        <div class="meridian-pillar-number">I</div>
+        <div class="meridian-pillar-icon">
+          <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M30 5 L55 20 L55 40 L30 55 L5 40 L5 20 Z" stroke="rgba(201,168,76,0.5)" stroke-width="1" fill="none"/>
+            <path d="M30 15 L45 24 L45 38 L30 47 L15 38 L15 24 Z" stroke="rgba(201,168,76,0.3)" stroke-width="0.5" fill="none"/>
+            <circle cx="30" cy="30" r="4" fill="rgba(201,168,76,0.4)"/>
+          </svg>
+        </div>
+        <h3 class="meridian-pillar-title">Acquisition</h3>
+        <p class="meridian-pillar-desc">
+          Our network of scouts and sommeliers traverses private cellars, forgotten warehouses, and estate sales across forty countries — uncovering spirits that have slipped through the seams of auction houses and public markets.
+        </p>
+      </div>
+      <div class="meridian-pillar-card meridian-fan-reveal meridian-reveal-delay-2">
+        <div class="meridian-pillar-number">II</div>
+        <div class="meridian-pillar-icon">
+          <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="10" y="10" width="40" height="40" stroke="rgba(201,168,76,0.5)" stroke-width="1" fill="none" transform="rotate(45 30 30)"/>
+            <rect x="18" y="18" width="24" height="24" stroke="rgba(201,168,76,0.3)" stroke-width="0.5" fill="none" transform="rotate(45 30 30)"/>
+            <circle cx="30" cy="30" r="3" fill="rgba(201,168,76,0.4)"/>
+          </svg>
+        </div>
+        <h3 class="meridian-pillar-title">Authentication</h3>
+        <p class="meridian-pillar-desc">
+          Every bottle undergoes a rigorous provenance verification through our panel of master distillers and independent historians. We guarantee not merely age, but story — the unbroken chain from barrel to your collection.
+        </p>
+      </div>
+      <div class="meridian-pillar-card meridian-fan-reveal meridian-reveal-delay-4">
+        <div class="meridian-pillar-number">III</div>
+        <div class="meridian-pillar-icon">
+          <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M30 5 L35 25 L55 30 L35 35 L30 55 L25 35 L5 30 L25 25 Z" stroke="rgba(201,168,76,0.5)" stroke-width="1" fill="none"/>
+            <circle cx="30" cy="30" r="8" stroke="rgba(201,168,76,0.3)" stroke-width="0.5" fill="none"/>
+            <circle cx="30" cy="30" r="3" fill="rgba(201,168,76,0.4)"/>
+          </svg>
+        </div>
+        <h3 class="meridian-pillar-title">Experience</h3>
+        <p class="meridian-pillar-desc">
+          Members receive invitations to private tastings in extraordinary settings — from a candlelit cellar beneath a Bordeaux château to a silk-draped suite overlooking the Sumida River. Each gathering is a ceremony of the senses.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PATTERN BAND -->
+<div class="meridian-pattern-band">
+  <svg viewBox="0 0 1200 40" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <pattern id="decoZig" x="0" y="0" width="80" height="40" patternUnits="userSpaceOnUse">
+      <path d="M0 20 L20 0 L40 20 L20 40 Z" stroke="rgba(201,168,76,0.15)" stroke-width="0.5" fill="none"/>
+      <path d="M40 20 L60 0 L80 20 L60 40 Z" stroke="rgba(201,168,76,0.15)" stroke-width="0.5" fill="none"/>
+    </pattern>
+    <rect width="1200" height="40" fill="url(#decoZig)"/>
+    <line x1="0" y1="20" x2="1200" y2="20" stroke="rgba(201,168,76,0.08)" stroke-width="0.5"/>
+  </svg>
+</div>
+
+<!-- COLLECTION SHOWCASE -->
+<section class="meridian-collection" id="collection">
+  <div class="meridian-collection-inner">
+    <div class="meridian-collection-header">
+      <div class="meridian-section-label meridian-reveal">Recent Acquisitions</div>
+      <h2 class="meridian-collection-title meridian-reveal meridian-reveal-delay-1">The Collection</h2>
+    </div>
+    <div class="meridian-collection-grid">
+      <div class="meridian-collection-item meridian-fan-reveal">
+        <div class="meridian-collection-item-bg"></div>
+        <div class="meridian-collection-item-label">
+          <div class="meridian-collection-item-diamond"></div>
+          <div class="meridian-collection-item-label-text">Whisky</div>
+          <div class="meridian-collection-item-label-sub">Scotland</div>
+        </div>
+        <div class="meridian-collection-item-content">
+          <div class="meridian-collection-item-year">Distilled 1947 · Bottled 1979</div>
+          <div class="meridian-collection-item-name">The Macallan Anniversary</div>
+          <div class="meridian-collection-item-detail">One of eleven remaining bottles from Cask No. 263. Sherry-matured, unfiltered, drawn at natural strength.</div>
+        </div>
+      </div>
+      <div class="meridian-collection-item meridian-fan-reveal meridian-reveal-delay-2">
+        <div class="meridian-collection-item-bg"></div>
+        <div class="meridian-collection-item-label">
+          <div class="meridian-collection-item-diamond"></div>
+          <div class="meridian-collection-item-label-text">Cognac</div>
+          <div class="meridian-collection-item-label-sub">France</div>
+        </div>
+        <div class="meridian-collection-item-content">
+          <div class="meridian-collection-item-year">Grande Champagne · Pre-Phylloxera</div>
+          <div class="meridian-collection-item-name">Croizet 1858 Léonie</div>
+          <div class="meridian-collection-item-detail">Recovered from a private estate in the Charente. Hand-blown glass, original wax seal intact.</div>
+        </div>
+      </div>
+      <div class="meridian-collection-item meridian-fan-reveal meridian-reveal-delay-4">
+        <div class="meridian-collection-item-bg"></div>
+        <div class="meridian-collection-item-label">
+          <div class="meridian-collection-item-diamond"></div>
+          <div class="meridian-collection-item-label-text">Sake</div>
+          <div class="meridian-collection-item-label-sub">Japan</div>
+        </div>
+        <div class="meridian-collection-item-content">
+          <div class="meridian-collection-item-year">Junmai Daiginjo · Niigata Prefecture</div>
+          <div class="meridian-collection-item-name">Koshi no Kanbai — Snow Peak</div>
+          <div class="meridian-collection-item-detail">Aged eight years in cedar. A vintage believed lost after the 2004 earthquake. Three bottles survive.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="meridian-stats">
+  <div class="meridian-stats-inner">
+    <div class="meridian-stat-item meridian-reveal">
+      <div class="meridian-stat-number" data-target="96">0</div>
+      <div class="meridian-stat-label">Years of Heritage</div>
+    </div>
+    <div class="meridian-stat-item meridian-reveal meridian-reveal-delay-1">
+      <div class="meridian-stat-number" data-target="340">0</div>
+      <div class="meridian-stat-label">Active Members</div>
+    </div>
+    <div class="meridian-stat-item meridian-reveal meridian-reveal-delay-2">
+      <div class="meridian-stat-number" data-target="42">0</div>
+      <div class="meridian-stat-label">Countries Sourced</div>
+    </div>
+    <div class="meridian-stat-item meridian-reveal meridian-reveal-delay-3">
+      <div class="meridian-stat-number" data-target="1847">0</div>
+      <div class="meridian-stat-label">Bottles Curated</div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="meridian-testimonials" id="voices">
+  <div class="meridian-testimonials-inner">
+    <div class="meridian-testimonials-header">
+      <div class="meridian-section-label meridian-reveal">Member Voices</div>
+      <h2 class="meridian-testimonials-title meridian-reveal meridian-reveal-delay-1">In Their Words</h2>
+    </div>
+    <div class="meridian-testimonial-item meridian-reveal">
+      <div class="meridian-testimonial-quote-mark">"</div>
+      <p class="meridian-testimonial-text">
+        I have collected for thirty years. Meridian showed me bottles I did not know existed, in places I would never have thought to look. They have changed what I believe is possible.
+      </p>
+      <div class="meridian-testimonial-author">Sir Edward Hale · London · Member since 2003</div>
+    </div>
+    <div class="meridian-testimonial-divider meridian-reveal"></div>
+    <div class="meridian-testimonial-item meridian-reveal" style="margin-top: 3rem;">
+      <div class="meridian-testimonial-quote-mark">"</div>
+      <p class="meridian-testimonial-text">
+        The Tokyo tasting in the Aman basement — that evening redefined my understanding of what a spirit can carry. Not just flavor, but the weight of history, the gravity of place. Extraordinary.
+      </p>
+      <div class="meridian-testimonial-author">Yuki Tanaka · Kyoto · Member since 2017</div>
+    </div>
+    <div class="meridian-testimonial-divider meridian-reveal"></div>
+    <div class="meridian-testimonial-item meridian-reveal" style="margin-top: 3rem;">
+      <div class="meridian-testimonial-quote-mark">"</div>
+      <p class="meridian-testimonial-text">
+        This is not a club. It is a covenant between people who understand that some things cannot be rushed, replicated, or replaced. I am honored to be among them.
+      </p>
+      <div class="meridian-testimonial-author">Isabelle Marchetti · Milan · Member since 2011</div>
+    </div>
+  </div>
+</section>
+
+<!-- INVITATION -->
+<section class="meridian-invitation" id="invitation">
+  <div class="meridian-invitation-inner meridian-reveal">
+    <div class="meridian-invitation-frame">
+      <div class="meridian-corner meridian-corner--tl"></div>
+      <div class="meridian-corner meridian-corner--tr"></div>
+      <div class="meridian-corner meridian-corner--bl"></div>
+      <div class="meridian-corner meridian-corner--br"></div>
+      <p class="meridian-invitation-prelude">You Are Cordially Invited</p>
+      <h2 class="meridian-invitation-title">Begin Your<br>Membership Inquiry</h2>
+      <p class="meridian-invitation-text">
+        Admission to the Meridian Society is extended by invitation and inquiry alone. We accept a limited number of new members each year to ensure the intimacy and integrity of the collective. If what you have read resonates, we welcome your expression of interest.
+      </p>
+      <a href="#" class="meridian-invitation-cta">Submit an Inquiry</a>
+      <p class="meridian-invitation-note">Responses are personally reviewed within fourteen days.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="meridian-footer">
+  <div class="meridian-footer-logo">The Meridian Society</div>
+  <div class="meridian-footer-links">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#">Press</a>
+    <a href="#">Contact</a>
+  </div>
+  <div class="meridian-footer-line"></div>
+  <p class="meridian-footer-copy">&copy; MMXXV The Meridian Society. All rights reserved. By appointment only.</p>
+</footer>
+
+<script>
+(function() {
+  // Loading screen
+  window.addEventListener('load', function() {
+    setTimeout(function() {
+      document.getElementById('meridianLoader').classList.add('hidden');
+    }, 1200);
+  });
+
+  // Generate sunburst rays
+  const sunburst = document.getElementById('meridianSunburst');
+  if (sunburst) {
+    const rayCount = 36;
+    for (let i = 0; i < rayCount; i++) {
+      const ray = document.createElement('div');
+      ray.className = 'meridian-sunburst-ray';
+      ray.style.transform = `rotate(${(360 / rayCount) * i}deg)`;
+      sunburst.appendChild(ray);
+    }
+  }
+
+  // Navigation scroll effect
+  const nav = document.getElementById('meridianNav');
+  let lastScroll = 0;
+  window.addEventListener('scroll', function() {
+    const currentScroll = window.pageYOffset;
+    if (currentScroll > 100) {
+      nav.classList.add('scrolled');
+    } else {
+      nav.classList.remove('scrolled');
+    }
+    lastScroll = currentScroll;
+  }, { passive: true });
+
+  // Scroll reveal with Intersection Observer
+  const revealElements = document.querySelectorAll('.meridian-reveal, .meridian-fan-reveal');
+  const observerOptions = {
+    root: null,
+    rootMargin: '0px 0px -80px 0px',
+    threshold: 0.1
+  };
+
+  const revealObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, observerOptions);
+
+  revealElements.forEach(function(el) {
+    revealObserver.observe(el);
+  });
+
+  // Animated number counter
+  const statNumbers = document.querySelectorAll('.meridian-stat-number[data-target]');
+  const counterObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        const target = parseInt(entry.target.getAttribute('data-target'));
+        animateCounter(entry.target, target);
+        counterObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  statNumbers.forEach(function(el) {
+    counterObserver.observe(el);
+  });
+
+  function animateCounter(element, target) {
+    const duration = 2000;
+    const startTime = performance.now();
+    const startValue = 0;
+
+    function easeOutExpo(t) {
+      return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+    }
+
+    function update(currentTime) {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const easedProgress = easeOutExpo(progress);
+      const currentValue = Math.round(startValue + (target - startValue) * easedProgress);
+      
+      element.textContent = currentValue.toLocaleString();
+      
+      if (progress < 1) {
+        requestAnimationFrame(update);
+      }
+    }
+    requestAnimationFrame(update);
+  }
+
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+    anchor.addEventListener('click', function(e) {
+      const href = this.getAttribute('href');
+      if (href === '#') return;
+      e.preventDefault();
+      const target = document.querySelector(href);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+  // Parallax effect on hero content
+  const heroContent = document.querySelector('.meridian-hero-content');
+  const heroFrame = document.querySelector('.meridian-hero-frame');
+  window.addEventListener('scroll', function() {
+    const scrollY = window.pageYOffset;
+    if (scrollY < window.innerHeight) {
+      const factor = scrollY * 0.3;
+      if (heroContent) heroContent.style.transform = `translateY(${factor}px)`;
+      if (heroFrame) heroFrame.style.transform = `translate(-50%, calc(-50% + ${factor * 0.5}px))`;
+    }
+  }, { passive: true });
+})();
+</script>
+</body>
 </html>
